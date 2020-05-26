@@ -22,6 +22,10 @@
 
 __INIT
 ENTRY(_start)
+  j reset_vector
+
+.globl linux_start
+linux_start:
 	/* Mask all interrupts */
 	csrw sie, zero
 
@@ -46,7 +50,7 @@ ENTRY(_start)
 
 	/* Save hart ID and DTB physical address */
 	mv s0, a0
-	mv s1, a1
+	la s1, dtb_start
 
 	/* Initialize page tables and relocate to virtual addresses */
 	la sp, init_thread_union + THREAD_SIZE

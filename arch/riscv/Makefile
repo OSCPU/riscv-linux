@@ -79,7 +79,7 @@ CHECKFLAGS += -D__riscv -D__riscv_xlen=$(BITS)
 
 head-y := arch/riscv/kernel/head.o
 
-core-y += arch/riscv/kernel/ arch/riscv/mm/
+core-y += arch/riscv/kernel/ arch/riscv/mm/ arch/riscv/bbl/ arch/riscv/softfloat/
 
 libs-y += arch/riscv/lib/
 
