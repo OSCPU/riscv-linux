@@ -31,9 +31,37 @@ trap_table:
   .dc.a bad_trap
 
   .option norvc
+  .option norelax
   .section .text #.init,"ax",@progbits
   .globl reset_vector
 reset_vector:
+
+  li t0, 0x41400008
+  sw zero, (t0)
+
+  # load data section
+  la a0, _data_flash_start
+  la a1, _data_ram_start
+  la a2, _edata
+  bgeu a1, a2, 2f
+1:
+  lw t0, (a0)
+  sw t0, (a1)
+  addi a0, a0, 4
+  addi a1, a1, 4
+  bltu a1, a2, 1b
+2:
+
+  # clear bss section
+  la a0, _edata
+  la a1, _end
+  bgeu a0, a1, 2f
+1:
+  sd zero, (a0)
+  addi a0, a0, 8
+  bltu a0, a1, 1b
+2:
+
   j do_reset
 
 trap_vector:
