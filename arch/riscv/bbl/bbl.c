@@ -113,7 +113,7 @@ void boot_other_hart(uintptr_t unused __attribute__((unused)))
   enter_machine_mode(entry, hartid, dtb_output());
 #else /* Run bbl in supervisor mode */
   protect_memory();
-  void *linux_start = (void *)(uintptr_t)0x80000004; // hack here
+  void *linux_start = (void *)(uintptr_t)0x40000004; // hack here
   enter_supervisor_mode(linux_start, hartid, 0);
 #endif
 }
