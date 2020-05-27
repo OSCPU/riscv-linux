@@ -167,6 +167,69 @@ static void wake_harts(void)
       *OTHER_HLS(hart)->ipi = 1; // wakeup the hart
 }
 
+void __am_uartlite_putchar(char ch);
+
+void fix_ras(int deep) {
+  if (deep == 0) {
+    __am_uartlite_putchar('@');
+    __am_uartlite_putchar('\n');
+    return;
+  }
+  fix_ras(deep - 1);
+  volatile int i;
+  i ++;
+}
+
+static void uart_printhex(uint32_t x, int byte) {
+  int i;
+  __am_uartlite_putchar('0');
+  __am_uartlite_putchar('x');
+  for (i = 0; i < byte * 2; i ++, x <<= 4)
+    __am_uartlite_putchar("0123456789abcdef"[(x >> (byte * 8 - 4)) & 0xf]);
+}
+
+static void uart_printstr(const char *str) {
+  while (*str) __am_uartlite_putchar(*str ++);
+}
+
+static void check_data(void) {
+  return;
+  extern char _data_flash_start;
+  extern char _data_ram_start;
+  extern char _edata;
+  char *mem = &_data_ram_start;
+  char *flash = &_data_flash_start;
+  uint32_t size = &_edata - &_data_ram_start;
+  uart_printstr("data_ram_start = ");
+  uart_printhex((uint32_t)(uint64_t)mem, 4);
+  uart_printstr(", data_flash_start = ");
+  uart_printhex((uint32_t)(uint64_t)flash, 4);
+  uart_printstr(", size = ");
+  uart_printhex(size, 4);
+  uart_printstr("\n");
+
+  int i;
+  int wrong_time = 0;
+  for (i = 0; i < size; i ++) {
+    char membyte = mem[i];
+    char flashbyte = flash[i];
+    if (membyte != flashbyte) {
+      wrong_time ++;
+      uart_printhex(wrong_time, 4);
+      uart_printstr("th wrong byte detect at address ");
+      uart_printhex((uint32_t)(uint64_t)(mem + i), 4);
+      uart_printstr(", right = ");
+      uart_printhex(flashbyte, 1);
+      uart_printstr(", wrong = ");
+      uart_printhex(membyte, 1);
+      uart_printstr(", diff = ");
+      uart_printhex(flashbyte ^ membyte, 1);
+      uart_printstr("\n");
+    }
+  }
+  uart_printstr("check end!\n");
+}
+
 void init_first_hart(uintptr_t hartid, uintptr_t dtb)
 {
 #ifndef __QEMU__
@@ -175,6 +238,8 @@ void init_first_hart(uintptr_t hartid, uintptr_t dtb)
 #endif
 
   __am_init_uartlite();
+  fix_ras(20);
+  check_data();
   printm("bbl loader\r\n");
 
   hart_init();
