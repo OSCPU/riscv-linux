@@ -16,7 +16,7 @@ int vsnprintf(char *buf, size_t size, const char *fmt, va_list args);
 
 void __attribute__((noreturn)) bad_trap(uintptr_t* regs, uintptr_t dummy, uintptr_t mepc)
 {
-  die("machine mode: unhandlable trap %d @ %p", read_csr(mcause), mepc);
+  die("machine mode: unhandlable trap %d @ 0x%lx, mtval = 0x%lx", read_csr(mcause), mepc, read_csr(mtval));
 }
 
 void __am_uartlite_putchar(char ch);
