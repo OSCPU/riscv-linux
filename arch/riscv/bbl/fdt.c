@@ -367,10 +367,8 @@ static void clint_done(const struct fdt_scan_node *node, void *extra)
   }
 
   volatile uint64_t *freq = (void *)((uintptr_t)scan->reg + 0x8000);
-  if (scan->freq_mhz != 0) {
-    *freq = scan->freq_mhz;
-    printm("CLINT: set frequency to %d MHz\n", scan->freq_mhz);
-  }
+  printm("CLINT: set frequency to %d MHz\n", 50);
+  *freq = 50 * 10; // 50MHz
 }
 
 void query_clint(uintptr_t fdt)
