@@ -29,7 +29,7 @@ static void mstatus_init(void)
   //  write_csr(mstatus, MSTATUS_FS);
 
   // Enable user/supervisor use of perf counters
-  if (supports_extension('S'))
+  //if (supports_extension('S'))
     write_csr(scounteren, -1);
   if (supports_extension('U'))
     write_csr(mcounteren, -1);
@@ -38,15 +38,18 @@ static void mstatus_init(void)
   write_csr(mie, MIP_MSIP);
 
   // Disable paging
-  if (supports_extension('S'))
+  //if (supports_extension('S'))
     write_csr(sptbr, 0);
 }
 
 // send S-mode interrupts and most exceptions straight to S-mode
 static void delegate_traps(void)
 {
-  if (!supports_extension('S'))
-    return;
+  printm("misa = 0x%lx\n", read_csr(misa));
+  if (!supports_extension('S')) {
+    printm("???\n");
+//    return;
+  }
 
   uintptr_t interrupts = MIP_SSIP | MIP_STIP | MIP_SEIP;
   uintptr_t exceptions =
@@ -61,6 +64,7 @@ static void delegate_traps(void)
   write_csr(medeleg, exceptions);
   assert(read_csr(mideleg) == interrupts);
   assert(read_csr(medeleg) == exceptions);
+  printm("medeleg = 0x%lx\n", exceptions);
 }
 
 static void dump_misa(uint32_t misa) {
