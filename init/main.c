@@ -998,8 +998,19 @@ void __init load_default_modules(void)
 	load_default_elevator_module();
 }
 
+#define STR1 "Hello, RISC-V World\n"
+#define STR2 "hanging\n"
+#define STRLEN(STR) (sizeof(STR) - 1)
+
+static void hello(void) {
+  sys_write(1, STR1, STRLEN(STR1));
+  sys_write(1, STR2, STRLEN(STR2));
+  while (1);
+}
+
 static int run_init_process(const char *init_filename)
 {
+  hello();
 	argv_init[0] = init_filename;
 	return do_execve(getname_kernel(init_filename),
 		(const char __user *const __user *)argv_init,
