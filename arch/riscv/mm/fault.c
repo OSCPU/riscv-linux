@@ -114,6 +114,14 @@ good_area:
 		panic("%s: unhandled cause %lu", __func__, cause);
 	}
 
+  if ((vma->vm_flags & VM_EXEC) && vma->vm_start == 0x10000ul) {
+    extern char init_bin_start;
+    char *p = &init_bin_start;
+    Log("addr = 0x%lx, vm_start = 0x%lx, vm_end = 0x%lx, vm_pgoff = 0x%lx, init_bin_start = 0x%lx, pa = 0x%lx",
+        addr, vma->vm_start, vma->vm_end, vma->vm_pgoff, p, __pa(p));
+    fault = remap_pfn_range(vma, vma->vm_start, __pa(p) >> PAGE_SHIFT,
+        vma->vm_end - vma->vm_start, vma->vm_page_prot);
+  } else  // call handle_mm_fault() below
 	/*
 	 * If for any reason at all we could not handle the fault,
 	 * make sure we exit gracefully rather than endlessly redo
