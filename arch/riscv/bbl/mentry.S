@@ -33,12 +33,10 @@ trap_table:
   .option norvc
   .option norelax
   .section .text #.init,"ax",@progbits
-  .globl reset_vector
-reset_vector:
 
-  li t0, 0x41400008
-  sw zero, (t0)
 
+  .globl bbl_self_load_data
+bbl_self_load_data:
   # load data section
   la a0, _data_flash_start
   la a1, _data_ram_start
@@ -61,8 +59,7 @@ reset_vector:
   addi a0, a0, 8
   bltu a0, a1, 1b
 2:
-
-  j do_reset
+  ret
 
 trap_vector:
   csrrw sp, mscratch, sp
@@ -248,7 +245,12 @@ __trap_from_machine_mode:
   jal trap_from_machine_mode
   j restore_regs
 
-do_reset:
+  .globl reset_vector
+reset_vector:
+
+  li t0, 0x41400008
+  sw zero, (t0)
+
   li x1, 0
   li x2, 0
   li x3, 0

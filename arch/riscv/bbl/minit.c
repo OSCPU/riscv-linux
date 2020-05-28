@@ -173,17 +173,6 @@ static void wake_harts(void)
 
 void __am_uartlite_putchar(char ch);
 
-void fix_ras(int deep) {
-  if (deep == 0) {
-    __am_uartlite_putchar('@');
-    __am_uartlite_putchar('\n');
-    return;
-  }
-  fix_ras(deep - 1);
-  volatile int i;
-  i ++;
-}
-
 static void uart_printhex(uint32_t x, int byte) {
   int i;
   __am_uartlite_putchar('0');
@@ -197,7 +186,6 @@ static void uart_printstr(const char *str) {
 }
 
 static void check_data(void) {
-  return;
   extern char _data_flash_start;
   extern char _data_ram_start;
   extern char _edata;
@@ -234,6 +222,18 @@ static void check_data(void) {
   uart_printstr("check end!\n");
 }
 
+void fix_ras(int deep) {
+  if (deep == 0) {
+    uart_printstr("Filling RAS with legal address...\n");
+    return;
+  }
+  fix_ras(deep - 1);
+  volatile int i;
+  i ++;
+}
+
+void bbl_self_load_data(void);
+
 void init_first_hart(uintptr_t hartid, uintptr_t dtb)
 {
 #ifndef __QEMU__
@@ -243,6 +243,9 @@ void init_first_hart(uintptr_t hartid, uintptr_t dtb)
 
   __am_init_uartlite();
   fix_ras(20);
+  uart_printstr("Loading data from FLASH to SDRAM...\r\n");
+  bbl_self_load_data();
+  uart_printstr("Checking data...\r\n");
   check_data();
   printm("bbl loader\r\n");
 

@@ -24,6 +24,7 @@ SECTIONS
   . = ALIGN(8); __entry_text_start = .; *(.entry.text) __entry_text_end = .;
   . = ALIGN(8); __irqentry_text_start = .; *(.irqentry.text) __irqentry_text_end = .;
   *(.fixup)
+  *(.binary.text)
   _etext = .;
  } > flash
  .exit.text :
