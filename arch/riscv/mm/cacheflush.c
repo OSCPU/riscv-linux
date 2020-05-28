@@ -16,6 +16,7 @@
 
 void flush_icache_pte(pte_t pte)
 {
+  return;
 	struct page *page = pte_page(pte);
 
 	if (!test_and_set_bit(PG_dcache_clean, &page->flags))
