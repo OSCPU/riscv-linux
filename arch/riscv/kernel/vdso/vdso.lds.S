@@ -39,7 +39,7 @@ SECTIONS
 	 * space for the dynamic symbol table, etc. If this amount is
 	 * insufficient, ld -shared will error; simply increase it here.
 	 */
-	. = 0x800;
+	. = 0x1800;
 	.text		: { *(.text .text.*) }		:text
 
 	.data		: {

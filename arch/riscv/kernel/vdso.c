@@ -93,6 +93,14 @@ int arch_setup_additional_pages(struct linux_binprm *bprm,
 	if (unlikely(ret))
 		mm->context.vdso = NULL;
 
+  // now fix the vdso code mapping
+  struct vm_area_struct *vma = find_vma(mm, vdso_base);
+  extern char vdso_binary_start[];
+  vma->vm_flags |= VM_MIXEDMAP;
+  int ret2 = vm_insert_pfn_prot(vma, vma->vm_start + PAGE_SIZE,
+      (__pa(vdso_binary_start) >> PAGE_SHIFT) + 1, vma->vm_page_prot);
+  if (ret2) panic("fail to insert code page of vdso");
+
 end:
 	up_write(&mm->mmap_sem);
 	return ret;
