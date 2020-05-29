@@ -242,12 +242,22 @@ void init_first_hart(uintptr_t hartid, uintptr_t dtb)
 #endif
 
   __am_init_uartlite();
-  fix_ras(20);
-  uart_printstr("Loading data from FLASH to SDRAM...\r\n");
+  __am_uartlite_putchar('L');
+  __am_uartlite_putchar('o');
+  __am_uartlite_putchar('a');
+  __am_uartlite_putchar('d');
+  __am_uartlite_putchar('i');
+  __am_uartlite_putchar('n');
+  __am_uartlite_putchar('g');
+  __am_uartlite_putchar('.');
+  __am_uartlite_putchar('.');
+  __am_uartlite_putchar('.');
+  __am_uartlite_putchar('\n');
   bbl_self_load_data();
-  uart_printstr("Checking data...\r\n");
+  fix_ras(20);
+  uart_printstr("Checking data...\n");
   check_data();
-  printm("bbl loader\r\n");
+  printm("bbl loader\n");
 
   hart_init();
   hls_init(0); // this might get called again from parse_config_string
