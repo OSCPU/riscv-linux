@@ -167,18 +167,6 @@ static void wake_harts(void)
       *OTHER_HLS(hart)->ipi = 1; // wakeup the hart
 }
 
-void __am_uartlite_putchar(char ch);
-
-void fix_ras(int deep) {
-  if (deep == 0) {
-    __am_uartlite_putchar('\n');
-    return;
-  }
-  fix_ras(deep - 1);
-  volatile int i;
-  i ++;
-}
-
 void init_first_hart(uintptr_t hartid, uintptr_t dtb)
 {
 #ifndef __QEMU__
@@ -186,8 +174,6 @@ void init_first_hart(uintptr_t hartid, uintptr_t dtb)
   dtb = (uintptr_t)&dtb_start;
 #endif
 
-  __am_init_uartlite();
-  fix_ras(20);
   printm("bbl loader\r\n");
 
   hart_init();
