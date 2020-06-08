@@ -52,6 +52,7 @@
 			compatible = "riscv,clint0";
 			interrupts-extended = <&L4 3 &L4 7>;
 			reg = <0x0 0x48000000 0x0 0x10000>;
+			clock-frequency-mhz = <200>;
 			reg-names = "control";
 		};
 	};
