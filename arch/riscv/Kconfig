@@ -27,6 +27,8 @@ config RISCV
 	select GENERIC_STRNCPY_FROM_USER
 	select GENERIC_STRNLEN_USER
 	select GENERIC_SMP_IDLE_THREAD
+	select GENERIC_MSI_IRQ
+	select GENERIC_MSI_IRQ_DOMAIN
 	select GENERIC_ATOMIC64 if !64BIT || !RISCV_ISA_A
 	select HAVE_MEMBLOCK
 	select HAVE_MEMBLOCK_NODE_MAP
@@ -240,6 +242,11 @@ config PCI_DOMAINS
 config PCI_DOMAINS_GENERIC
 	def_bool PCI
 
+config PCI_MSI_IRQ_DOMAIN
+  def_bool RISCV
+  depends on PCI_MSI
+  select GENERIC_MSI_IRQ_DOMAIN
+
 source "drivers/pci/Kconfig"
 
 endmenu
@@ -316,3 +323,4 @@ source "security/Kconfig"
 source "crypto/Kconfig"
 
 source "lib/Kconfig"
+
