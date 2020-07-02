@@ -22,7 +22,8 @@
 
 __INIT
 ENTRY(_start)
-  j reset_vector
+  la t0, reset_vector
+  jr t0
 
 .globl linux_start
 linux_start:
