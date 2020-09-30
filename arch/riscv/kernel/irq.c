@@ -57,6 +57,6 @@ extern int zynq_early_slcr_init(void);
 
 void __init init_IRQ(void)
 {
-  zynq_early_slcr_init();
+  //zynq_early_slcr_init();
 	irqchip_init();
 }
